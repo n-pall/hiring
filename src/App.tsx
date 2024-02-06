@@ -1,18 +1,10 @@
-import { useState } from 'react'
+import { useRoutes } from 'react-router-dom'
+import routes from './routes'
 import './App.css'
-import questions from './fixture/questions.json'
-import MultipleChoiceQuestion from './components/MultipleChoiceQuestion'
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div className="card">
-        <MultipleChoiceQuestion questions={questions} />
-      </div>
-    </>
-  )
+const App = () => {
+  const content = useRoutes(routes)
+  return content
 }
 
 export default App
