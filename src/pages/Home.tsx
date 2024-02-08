@@ -24,25 +24,8 @@ type SubjectiveQuestionType = {
   text: string
   answer: string | undefined
 }
-
 const Home = () => {
-  const [formData, setFormData] = useState<[] | undefined>()
-
-  const updateForm = (
-    questions: SubjectiveQuestionType[] | MultipleChoiceQuestionType[]
-  ) => {
-    // setFormData((data) => [...data, questions])
-    console.log(questions)
-  }
-
-  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-
-    // TODO API call to submit form
-
-    // window.location.href = 'submitted'
-  }
-
+  const [formData, setFormData] = useState<[]>([])
   const {
     previousStep,
     nextStep,
@@ -52,6 +35,28 @@ const Home = () => {
     goTo,
     steps,
   } = useMultiStepForm(2)
+
+  const updateForm = (
+    questions: SubjectiveQuestionType[] | MultipleChoiceQuestionType[],
+    type: string
+  ) => {
+    setFormData((data) => {
+      const updatedQuestions = {}
+      updatedQuestions[type] = [...questions]
+      return { ...data, ...updatedQuestions }
+    })
+  }
+
+  const handleNext = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    if (isLastStep) {
+      // TODO API call to submit form
+      window.location.href = 'submitted'
+      return
+    }
+
+    nextStep()
+  }
 
   const getCurrentStep = () => {
     switch (currentStepIndex) {
@@ -77,7 +82,7 @@ const Home = () => {
       <div>{getCurrentStep()}</div>
       <div className="flex flex-row gap-5 py-3">
         {!isFirstStep && <Button onClick={previousStep}>Back</Button>}
-        <Button onClick={nextStep}>{isLastStep ? 'Submit' : 'Next'}</Button>
+        <Button onClick={handleNext}>{isLastStep ? 'Submit' : 'Next'}</Button>
       </div>
     </div>
   )

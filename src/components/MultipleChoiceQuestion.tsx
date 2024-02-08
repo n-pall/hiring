@@ -19,7 +19,7 @@ type MultipleChoiceQuestion = {
 
 type Props = {
   questions: Array<MultipleChoiceQuestion>
-  updateForm: (questions: Array<MultipleChoiceQuestion>) => void
+  updateForm: (questions: Array<MultipleChoiceQuestion>, type: string) => void
 }
 
 const MultipleChoiceQuestion: React.FC<Props> = ({ questions, updateForm }) => {
@@ -28,8 +28,8 @@ const MultipleChoiceQuestion: React.FC<Props> = ({ questions, updateForm }) => {
     index: number
   ) => {
     const newQuestions = [...questions]
-    newQuestions[index].selected = event?.target?.value ?? undefined
-    updateForm(newQuestions as MultipleChoiceQuestion[])
+    newQuestions[index].selected = event?.target?.value
+    updateForm(newQuestions as MultipleChoiceQuestion[], 'mcq')
   }
 
   return (
@@ -41,7 +41,10 @@ const MultipleChoiceQuestion: React.FC<Props> = ({ questions, updateForm }) => {
               {index + 1}. {question.text}
             </Typography>
           </div>
-          <RadioGroup className="grid grid-cols-2 gap-4">
+          <RadioGroup
+            className="grid grid-cols-2 gap-4"
+            defaultValue={question.selected}
+          >
             {question.choices.map((choice) => (
               <div className="flex flex-row items-center gap-2" key={choice.id}>
                 <RadioGroupItem

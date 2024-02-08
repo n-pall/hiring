@@ -9,7 +9,7 @@ type SubjectiveQuestion = {
 }
 type Props = {
   questions: Array<SubjectiveQuestion>
-  updateForm: (questions: Array<SubjectiveQuestion>) => void
+  updateForm: (questions: Array<SubjectiveQuestion>, type: string) => void
 }
 
 const SubjectiveQuestions: React.FC<Props> = ({ questions, updateForm }) => {
@@ -19,20 +19,18 @@ const SubjectiveQuestions: React.FC<Props> = ({ questions, updateForm }) => {
   ) => {
     const newQuestions = [...questions]
     newQuestions[index].answer = event?.target?.value ?? undefined
-    updateForm(newQuestions as SubjectiveQuestion[])
+    updateForm(newQuestions as SubjectiveQuestion[], 'subjective')
   }
 
   return (
     <>
       {questions.map((question, index) => (
-        <div key={question.id}>
-          <div>
-            <Typography variant="normal">
-              {index + 1}. {question.text}
-            </Typography>
-          </div>
+        <div key={question.id} className="py-5">
+          <Typography variant="normal">
+            {index + 1}. {question.text}
+          </Typography>
           <Textarea
-            // value={question.answer}
+            value={question.answer}
             onChange={(e) => {
               handleChange(e, index)
             }}
