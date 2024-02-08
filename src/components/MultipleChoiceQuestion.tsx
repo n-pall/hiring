@@ -1,29 +1,56 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Typography } from '@/components/ui/typography'
 
-type Props = {
-  questions: Array<any>
+type Choice = {
+  id: string
+  label: string
+  value: string | undefined
 }
 
-const MultipleChoiceQuestion: React.FC<Props> = (props: Props) => {
+type MultipleChoiceQuestion = {
+  id: string
+  text: string
+  choices: Array<Choice>
+  answer: string | undefined
+  selected: string | null | undefined
+}
+
+type Props = {
+  questions: Array<MultipleChoiceQuestion>
+  updateForm: (questions: Array<MultipleChoiceQuestion>) => void
+}
+
+const MultipleChoiceQuestion: React.FC<Props> = ({ questions, updateForm }) => {
+  const handleChange = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent> | undefined,
+    index: number
+  ) => {
+    const newQuestions = [...questions]
+    newQuestions[index].selected = event?.target?.value ?? undefined
+    updateForm(newQuestions as MultipleChoiceQuestion[])
+  }
+
   return (
     <>
-      {props.questions.map((question, index) => (
-        <div className="my-6 py-5">
+      {questions.map((question, index) => (
+        <div className="my-6 py-5" key={question.id}>
           <div>
             <Typography variant="normal">
               {index + 1}. {question.text}
             </Typography>
           </div>
-          <RadioGroup
-            defaultValue="option-one"
-            className="grid grid-cols-2 gap-4"
-          >
-            {question.choices.map((choice: any) => (
+          <RadioGroup className="grid grid-cols-2 gap-4">
+            {question.choices.map((choice) => (
               <div className="flex flex-row items-center gap-2" key={choice.id}>
-                <RadioGroupItem value={choice.value} id={choice.id} />
+                <RadioGroupItem
+                  value={choice.value}
+                  id={choice.id}
+                  onClick={(e) => {
+                    handleChange(e, index)
+                  }}
+                />
                 <Label htmlFor={choice.value}>{choice.label}</Label>
               </div>
             ))}

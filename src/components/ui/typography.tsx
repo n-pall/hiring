@@ -14,6 +14,7 @@ const typographyVariants = cva('', {
     },
     shade: {
       muted: 'text-gray-60',
+      white: 'text-white',
       default: '',
     },
   },
