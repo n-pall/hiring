@@ -1,10 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import MultipleChoiceQuestion from '@/components/MultipleChoiceQuestion'
-import questions from '@/fixture/questions.json'
 import { useMultiStepForm } from '../hooks/useMultiStepForm'
 import { Button } from '@/components/ui/button'
 import SubjectiveQuestions from '@/components/SubjectiveQuestions'
 import SideBar from '@/components/SideBar'
+import { fetchQuestions, fetchTabs } from '../api/api'
+import Loading from '@/components/Loading'
+
+type Tabs = {
+  id: string
+  text: string
+}
 
 type Choice = {
   id: string
@@ -25,8 +31,30 @@ type SubjectiveQuestionType = {
   text: string
   answer: string | undefined
 }
+
+type FormData = {
+  mcq: Array<MultipleChoiceQuestionType>
+  subjective: Array<SubjectiveQuestionType>
+}
+
 const Home = () => {
-  const [formData, setFormData] = useState<[]>([])
+  const [formQuestions, setFormData] = useState<FormData>()
+  const [tabs, setTabs] = useState<Tabs[]>()
+
+  useEffect(() => {
+    fetchQuestions().then((res) => {
+      setFormData(res)
+    })
+    fetchTabs().then((res) => {
+      setTabs(res)
+    })
+    return () => {}
+  }, [])
+
+  const numberOfSteps = useMemo(() => {
+    return tabs?.length ?? 0
+  }, [tabs])
+
   const {
     previousStep,
     nextStep,
@@ -35,14 +63,14 @@ const Home = () => {
     isLastStep,
     goTo,
     steps,
-  } = useMultiStepForm(2)
+  } = useMultiStepForm(numberOfSteps)
 
   const updateForm = (
     questions: SubjectiveQuestionType[] | MultipleChoiceQuestionType[],
     type: string
   ) => {
     setFormData((data) => {
-      const updatedQuestions = {}
+      const updatedQuestions = {} as FormData
       updatedQuestions[type] = [...questions]
       return { ...data, ...updatedQuestions }
     })
@@ -59,12 +87,14 @@ const Home = () => {
     nextStep()
   }
 
+  if (!formQuestions || !tabs) return <Loading />
+
   const getCurrentStep = () => {
     switch (currentStepIndex) {
       case 0:
         return (
           <MultipleChoiceQuestion
-            questions={questions.mcq}
+            questions={formQuestions?.mcq}
             updateForm={updateForm}
           />
         )
@@ -72,7 +102,7 @@ const Home = () => {
         return (
           <SubjectiveQuestions
             updateForm={updateForm}
-            questions={questions.subjective}
+            questions={formQuestions?.subjective}
           />
         )
     }
@@ -81,7 +111,7 @@ const Home = () => {
   return (
     <div className="flex flex-row">
       <div>
-        <SideBar currentStepIndex={currentStepIndex} goTo={goTo} />
+        <SideBar currentStepIndex={currentStepIndex} goTo={goTo} tabs={tabs} />
       </div>
       <div className="px-4 w-full">
         <div>{getCurrentStep()}</div>

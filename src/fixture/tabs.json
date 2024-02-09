@@ -1,6 +1,4 @@
-{
-  "tabs": [
-    { "id": "123", "text": "MCQ Questions" },
-    { "id": "789", "text": "Subjective Questions" }
-  ]
-}
+[
+  { "id": "123", "text": "MCQ Questions" },
+  { "id": "789", "text": "Subjective Questions" }
+]

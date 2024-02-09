@@ -1,7 +1,6 @@
 import { Button } from './ui/button'
-import tabsConfig from '@/fixture/tabs.json'
 
-type Tabs = {
+type Tab = {
   id: string
   text: string
 }
@@ -9,11 +8,10 @@ type Tabs = {
 type Props = {
   currentStepIndex: number
   goTo: (index: number) => void
+  tabs: Array<Tab>
 }
 
-const tabs = tabsConfig.tabs as Tabs[]
-
-const SideBar: React.FC<Props> = ({ currentStepIndex, goTo }) => {
+const SideBar: React.FC<Props> = ({ currentStepIndex, goTo, tabs }) => {
   return (
     <div className="absolute left-0 md:relative h-lvh w-fit">
       <nav className="py-5 px-4  bg-neutral-900 h-full ">
