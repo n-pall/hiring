@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import MultipleChoiceQuestion from '@/components/MultipleChoiceQuestion'
 import { useMultiStepForm } from '../hooks/useMultiStepForm'
 import { Button } from '@/components/ui/button'
 import SubjectiveQuestions from '@/components/SubjectiveQuestions'
 import SideBar from '@/components/SideBar'
-import { fetchQuestions, fetchTabs } from '../api/api'
+import { fetchQuestions, fetchTabs, submitForm } from '@/api/api'
 import Loading from '@/components/Loading'
 
 type Tabs = {
@@ -32,28 +32,29 @@ type SubjectiveQuestionType = {
   answer: string | undefined
 }
 
-type FormData = {
+type Questions = {
   mcq: Array<MultipleChoiceQuestionType>
   subjective: Array<SubjectiveQuestionType>
 }
 
 const Home = () => {
-  const [formQuestions, setFormData] = useState<FormData>()
-  const [tabs, setTabs] = useState<Tabs[]>()
+  const [formQuestions, setFormData] = useState<Questions>()
+  const tabs = useRef<Tabs[]>([])
 
   useEffect(() => {
     fetchQuestions().then((res) => {
       setFormData(res)
     })
     fetchTabs().then((res) => {
-      setTabs(res)
+      // setTabs(res)
+      tabs.current = [...res]
     })
     return () => {}
   }, [])
 
   const numberOfSteps = useMemo(() => {
-    return tabs?.length ?? 0
-  }, [tabs])
+    return tabs.current.length
+  }, [tabs.current])
 
   const {
     previousStep,
@@ -66,7 +67,7 @@ const Home = () => {
   } = useMultiStepForm(numberOfSteps)
 
   const updateForm = (
-    questions: SubjectiveQuestionType[] | MultipleChoiceQuestionType[],
+    questions: MultipleChoiceQuestionType[] | SubjectiveQuestionType[],
     type: string
   ) => {
     setFormData((data) => {
@@ -80,7 +81,9 @@ const Home = () => {
     e.preventDefault()
     if (isLastStep) {
       // TODO API call to submit form
-      window.location.href = 'submitted'
+      submitForm(formQuestions).then(() => {
+        // window.location.href = 'submitted'
+      })
       return
     }
 
@@ -111,7 +114,11 @@ const Home = () => {
   return (
     <div className="flex flex-row">
       <div>
-        <SideBar currentStepIndex={currentStepIndex} goTo={goTo} tabs={tabs} />
+        <SideBar
+          currentStepIndex={currentStepIndex}
+          goTo={goTo}
+          tabs={tabs.current}
+        />
       </div>
       <div className="px-4 w-full">
         <div>{getCurrentStep()}</div>

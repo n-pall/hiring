@@ -57,4 +57,15 @@ const fetchTabs = async () => {
   return tabs as Tabs[]
 }
 
-export { fetchQuestions, fetchTabs }
+const submitForm = async (questions: Questions | undefined) => {
+  await axiosClient
+    .post('/examination', { payload: questions })
+    .then((res) => {
+      console.log(res)
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+}
+
+export { fetchQuestions, fetchTabs, submitForm }
