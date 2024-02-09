@@ -1,5 +1,4 @@
 import { Button } from './ui/button'
-import { Typography } from './ui/typography'
 import tabsConfig from '@/fixture/tabs.json'
 
 type Tabs = {
