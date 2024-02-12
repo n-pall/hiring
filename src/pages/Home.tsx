@@ -91,6 +91,14 @@ const Home = () => {
     nextStep()
   }
 
+  const questionsCount = useMemo(() => {
+    const mcqLength = formQuestions?.mcq.length
+    const subjectiveLength = formQuestions?.subjective.length
+    return (
+      (mcqLength ? mcqLength : 0) + (subjectiveLength ? subjectiveLength : 0)
+    )
+  }, [formQuestions])
+
   if (!formQuestions || !tabs) return <Loading />
 
   const getCurrentStep = () => {
@@ -114,21 +122,24 @@ const Home = () => {
 
   return (
     <div className="flex flex-row">
-      <div>
+      <div className="">
         <SideBar
           currentStepIndex={currentStepIndex}
           goTo={goTo}
           tabs={tabs.current}
+          questionsCount={questionsCount}
         />
       </div>
-      <div className="px-4 w-full">
-        <div>{getCurrentStep()}</div>
-        <TaskFooter
-          showBack={!isFirstStep}
-          onBack={previousStep}
-          onNext={handleNext}
-          nextButtonText={isLastStep ? 'Submit' : 'Next'}
-        />
+      <div className="px-4 w-full flex flex-col justify-between">
+        <div className="h-1/2">{getCurrentStep()}</div>
+        <div>
+          <TaskFooter
+            showBack={!isFirstStep}
+            onBack={previousStep}
+            onNext={handleNext}
+            nextButtonText={isLastStep ? 'Submit' : 'Next'}
+          />
+        </div>
       </div>
     </div>
   )
