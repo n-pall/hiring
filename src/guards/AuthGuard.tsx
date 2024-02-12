@@ -25,8 +25,6 @@ const AuthGuard: FC<AuthGuardProps> = ({ children }) => {
     return <Navigate to={requestedLocation} />
   }
 
-  return <Login />
-
   return <>{children}</>
 }
 

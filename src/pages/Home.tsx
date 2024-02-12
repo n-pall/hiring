@@ -6,6 +6,7 @@ import SubjectiveQuestions from '@/components/SubjectiveQuestions'
 import SideBar from '@/components/SideBar'
 import { fetchQuestions, fetchTabs, submitForm } from '@/api/api'
 import Loading from '@/components/Loading'
+import TaskFooter from '@/components/TaskFooter'
 
 type Tabs = {
   id: string
@@ -122,10 +123,12 @@ const Home = () => {
       </div>
       <div className="px-4 w-full">
         <div>{getCurrentStep()}</div>
-        <div className="flex flex-row gap-5 py-3">
-          {!isFirstStep && <Button onClick={previousStep}>Back</Button>}
-          <Button onClick={handleNext}>{isLastStep ? 'Submit' : 'Next'}</Button>
-        </div>
+        <TaskFooter
+          showBack={!isFirstStep}
+          onBack={previousStep}
+          onNext={handleNext}
+          nextButtonText={isLastStep ? 'Submit' : 'Next'}
+        />
       </div>
     </div>
   )

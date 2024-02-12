@@ -19,6 +19,7 @@ const Login: React.FC<Props> = (props: Props) => {
   const login = () => {
     console.log(email.current?.value)
     console.log(password.current?.value)
+    window.location.href = '/home'
   }
 
   return (
