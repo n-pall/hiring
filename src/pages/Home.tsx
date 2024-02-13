@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import MultipleChoiceQuestion from '@/components/MultipleChoiceQuestion'
 import { useMultiStepForm } from '../hooks/useMultiStepForm'
-import { Button } from '@/components/ui/button'
 import SubjectiveQuestions from '@/components/SubjectiveQuestions'
 import SideBar from '@/components/SideBar'
 import { fetchQuestions, fetchTabs, submitForm } from '@/api/api'
 import Loading from '@/components/Loading'
 import TaskFooter from '@/components/TaskFooter'
+import { Separator } from '@/components/ui/separator'
 
 type Tabs = {
   id: string
@@ -82,9 +82,13 @@ const Home = () => {
     e.preventDefault()
     if (isLastStep) {
       // TODO API call to submit form
-      submitForm(formQuestions).then(() => {
-        // window.location.href = 'submitted'
-      })
+      submitForm(formQuestions)
+        .then(() => {
+          // window.location.href = 'submitted'
+        })
+        .catch((err) => {
+          console.log(err)
+        })
       return
     }
 
@@ -130,9 +134,10 @@ const Home = () => {
           questionsCount={questionsCount}
         />
       </div>
-      <div className="px-4 w-full flex flex-col justify-between">
-        <div className="h-1/2">{getCurrentStep()}</div>
-        <div>
+      <div className="px-4 w-full flex flex-col justify-between h-screen overflow-hidden">
+        <div className="overflow-y-scroll">{getCurrentStep()}</div>
+        <div className="relative">
+          <Separator />
           <TaskFooter
             showBack={!isFirstStep}
             onBack={previousStep}
